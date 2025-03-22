@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio - InvestWise</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f4f6f9;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 80%;
+            margin: 50px auto;
+            background: #fff;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #1976d2;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background: #1976d2;
+            color: #fff;
+        }
+
+        .profit {
+            color: green;
+            font-weight: bold;
+        }
+
+        .loss {
+            color: red;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Your Investment Portfolio</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Stock Name</th>
+                    <th>Quantity</th>
+                    <th>Purchase Price</th>
+                    <th>Current Price</th>
+                    <th>Profit/Loss</th>
+                    <th>Investment Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Reliance Industries</td>
+                    <td>10</td>
+                    <td>₹2,500</td>
+                    <td>₹2,700</td>
+                    <td class="profit">+₹2,000</td>
+                    <td>01-Mar-2025</td>
+                </tr>
+                <tr>
+                    <td>TCS</td>
+                    <td>5</td>
+                    <td>₹3,200</td>
+                    <td>₹3,100</td>
+                    <td class="loss">-₹500</td>
+                    <td>10-Feb-2025</td>
+                </tr>
+                <!-- More stocks can be dynamically added here -->
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
