@@ -1,29 +1,34 @@
-CREATE DATABASE stock_management;
-USE stock_management;
+-- Drop existing tables if they exist
+DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS stocks;
 
+-- Create Users Table
 CREATE TABLE users (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    name VARCHAR(100),
-    email VARCHAR(100) UNIQUE,
-    password VARCHAR(255)
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    email TEXT UNIQUE NOT NULL,
+    password TEXT NOT NULL
 );
 
-CREATE TABLE mutual_funds (
-    fund_id INT PRIMARY KEY AUTO_INCREMENT,
-    name VARCHAR(100),
-    nav FLOAT,
-    category VARCHAR(50),
-    risk VARCHAR(50),
-    returns FLOAT
+-- Create Stocks Table
+CREATE TABLE stocks (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    symbol TEXT NOT NULL,
+    company TEXT NOT NULL,
+    price REAL NOT NULL,
+    change REAL NOT NULL
 );
 
-CREATE TABLE user_portfolio (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    user_id INT,
-    fund_id INT,
-    units FLOAT,
-    purchase_price FLOAT,
-    purchase_date DATE,
-    FOREIGN KEY (user_id) REFERENCES users(id),
-    FOREIGN KEY (fund_id) REFERENCES mutual_funds(fund_id)
-);
+-- Insert Sample Users
+INSERT INTO users (name, email, password) VALUES 
+('John Doe', 'john@example.com', 'hashed_password1'),
+('Alice Smith', 'alice@example.com', 'hashed_password2'),
+('Bob Johnson', 'bob@example.com', 'hashed_password3');
+
+-- Insert Sample Stock Data
+INSERT INTO stocks (symbol, company, price, change) VALUES 
+('AAPL', 'Apple Inc.', 175.6, 1.5),
+('GOOGL', 'Alphabet Inc.', 2780.3, -2.3),
+('TSLA', 'Tesla Inc.', 930.2, 3.2),
+('MSFT', 'Microsoft Corporation', 299.8, 0.5),
+('AMZN', 'Amazon.com, Inc.', 3345.0, -1.2);

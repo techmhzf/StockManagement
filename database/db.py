@@ -1,9 +1,3 @@
-import pymysql
+from flask_sqlalchemy import SQLAlchemy
 
-def get_db_connection():
-    return pymysql.connect(
-        host="localhost",
-        user="root",
-        password="yourpassword",
-        database="stock_management"
-    )
+db = SQLAlchemy()
