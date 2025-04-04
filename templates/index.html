@@ -3,141 +3,246 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>InvestWise - Advanced Dashboard</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <title>Stock & Mutual Funds Management</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: 'Roboto', sans-serif;
-            background-color: #e3f2fd;
-            color: #333;
+            font-family: 'Poppins', sans-serif;
             margin: 0;
-            padding: 20px;
+            padding: 0;
+            background: linear-gradient(to bottom, #f0f4f8, #e8eff5);
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
         }
+
         header {
-            background-color: #0288d1;
-            color: #fff;
-            padding: 20px;
-            text-align: center;
-            border-radius: 12px;
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
-            margin-bottom: 30px;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
+            padding: 20px 40px;
+            background: linear-gradient(to bottom, #fff, #f9f9f9);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
-        .container {
-            max-width: 1200px;
-            margin: auto;
+
+        .logo {
+            font-size: 1.5em;
+            font-weight: 600;
+            color: #1976d2;
         }
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            margin: 0;
+            padding: 0;
         }
-        .card {
-            background-color: #fff;
-            border-radius: 12px;
-            padding: 25px;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+        nav ul li {
+            margin-left: 20px;
         }
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+
+        nav ul li a {
+            text-decoration: none;
+            color: #333;
+            transition: color 0.3s ease;
         }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            background-color: #fafafa;
-            border-radius: 8px;
+
+        nav ul li a:hover {
+            color: #1976d2;
         }
-        th, td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
+
+        .cta-buttons {
+            display: flex;
+            gap: 15px;
         }
-        th {
-            background-color: #bbdefb;
-            color: #01579b;
-        }
-        button {
-            background-color: #0277bd;
-            color: #fff;
-            padding: 12px 20px;
+
+        .cta-button {
+            padding: 10px 20px;
+            font-size: 0.9em;
             border: none;
             border-radius: 8px;
+            background: linear-gradient(to right, #1e88e5, #1565c0);
+            color: #fff;
             cursor: pointer;
-            transition: background-color 0.3s ease;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.18);
+            text-decoration: none;
         }
-        button:hover {
-            background-color: #01579b;
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.22);
+        }
+
+        .hero, .features, .call-to-action {
+            text-align: center;
+            padding: 80px 20px;
+            background: linear-gradient(to bottom, #e8eff5, #d1d8e0);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        .hero h1 {
+            font-size: 3em;
+            margin-bottom: 20px;
+            color: #1976d2;
+        }
+
+        .hero p {
+            font-size: 1.2em;
+            color: #444;
+            max-width: 800px;
+            margin: 0 auto 30px;
+        }
+
+        .features {
+            background: linear-gradient(to bottom, #f9f9f9, #e8eff5);
+        }
+
+        .features h2 {
+            color: #1976d2;
+        }
+
+        .feature {
+            display: inline-block;
+            width: 300px;
+            margin: 20px;
+            vertical-align: top;
+        }
+
+        .feature h3 {
+            color: #1976d2;
+            margin-bottom: 10px;
+        }
+
+        .feature p {
+            color: #555;
+        }
+
+        .call-to-action {
+            background: linear-gradient(to bottom, #d1d8e0, #c0c8d0);
+        }
+
+        footer {
+            text-align: center;
+            padding: 35px 0;
+            background: linear-gradient(to bottom, #e8eaf6, #d1d8e0);
+            box-shadow: 0 -3px 6px rgba(0, 0, 0, 0.08);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        footer nav ul {
+            list-style: none;
+            display: flex;
+            margin: 10px 0;
+            padding: 0;
+        }
+
+        footer nav ul li {
+            margin: 0 15px;
+        }
+
+        footer nav ul li a {
+            text-decoration: none;
+            color: #666;
+            transition: color 0.3s ease;
+        }
+
+        footer nav ul li a:hover {
+            color: #1976d2;
+        }
+
+        footer p {
+            color: #666;
+        }
+
+        .show {
+            opacity: 1 !important;
+            transform: translateY(0) !important;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>InvestWise Dashboard</h1>
-            <button onclick="logout()">Logout</button>
-        </header>
-        <div class="grid">
-            <section class="card user-info">
-                <h2>Welcome, {{ name }}</h2>
-                <p>Email: {{ current_user.email }}</p>
-                <p>Portfolio Value: ${{ portfolio_value }}</p>
-            </section>
-            <section class="card stock-summary">
-                <h2>Stock Holdings</h2>
-                <ul>
-                    {% for stock in stocks %}
-                    <li>{{ stock.company }} ({{ stock.symbol }}) - ${{ stock.price }} | Change: {{ stock.change }}%</li>
-                    {% endfor %}
-                </ul>
-            </section>
+    <header>
+        <div class="logo">InvestWise</div>
+        <nav>
+            <ul>
+                <li><a href="#features">Features</a></li>
+                <li><a href="#pricing">Pricing</a></li>
+                <li><a href="#about">About Us</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </nav>
+        <div class="cta-buttons">
+            <a href="/login" class="cta-button">Login</a>
+            <a href="/register" class="cta-button">Register</a>
         </div>
-        <section class="card chart-container">
-            <h2>Market Trends</h2>
-            <canvas id="stockChart"></canvas>
-        </section>
-        <section class="card transactions">
-            <h2>Recent Transactions</h2>
-            <table>
-                <tr>
-                    <th>Stock</th>
-                    <th>Action</th>
-                    <th>Price</th>
-                    <th>Date</th>
-                </tr>
-                {% for transaction in transactions %}
-                <tr>
-                    <td>{{ transaction.stock }}</td>
-                    <td>{{ transaction.action }}</td>
-                    <td>${{ transaction.price }}</td>
-                    <td>{{ transaction.date }}</td>
-                </tr>
-                {% endfor %}
-            </table>
-        </section>
+    </header>
+
+    <div class="hero">
+        <h1>Unlock Your Financial Potential</h1>
+        <p>Manage your stocks and mutual funds with ease. Get real-time data, advanced analytics, and personalized insights to make informed decisions.</p>
+        <a href="/register" class="cta-button">Get Started Free</a>
     </div>
+
+    <div class="features">
+        <h2>Key Features</h2>
+        <div class="feature">
+            <h3>Real-Time Data</h3>
+            <p>Access up-to-the-minute market data for stocks and mutual funds.</p>
+        </div>
+        <div class="feature">
+            <h3>Portfolio Analytics</h3>
+            <p>Track your portfolio's performance with detailed analytics and reports.</p>
+        </div>
+        <div class="feature">
+            <h3>Personalized Insights</h3>
+            <p>Receive personalized recommendations based on your investment goals.</p>
+        </div>
+    </div>
+
+    <div class="call-to-action">
+        <h2>Ready to Take Control of Your Investments?</h2>
+        <a href="/register" class="cta-button">Sign Up Now</a>
+    </div>
+
+    <footer>
+        <nav>
+            <ul>
+                <li><a href="/privacy">Privacy Policy</a></li>
+                <li><a href="/terms">Terms of Service</a></li>
+                <li><a href="/faq">FAQ</a></li>
+            </ul>
+        </nav>
+        <p>&copy; <span id="year"></span> InvestWise. All rights reserved.</p>
+        <p>Contact: info@investwise.com | 123 Main St, Anytown, USA</p>
+    </footer>
+
     <script>
-        function logout() {
-            window.location.href = '/logout';
+        document.getElementById("year").textContent = new Date().getFullYear();
+
+        function reveal() {
+            var sections = document.querySelectorAll(".hero, .features, .call-to-action");
+            sections.forEach((section) => {
+                var windowHeight = window.innerHeight;
+                var elementTop = section.getBoundingClientRect().top;
+                var elementVisible = 100;
+
+                if (elementTop < windowHeight - elementVisible) {
+                    section.classList.add("show");
+                }
+            });
         }
-        var ctx = document.getElementById('stockChart').getContext('2d');
-        var stockChart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May'],
-                datasets: [{
-                    label: 'Stock Price Trend',
-                    data: [120, 130, 140, 125, 150],
-                    borderColor: '#0288d1',
-                    backgroundColor: 'rgba(2, 136, 209, 0.2)',
-                    fill: true
-                }]
-            }
-        });
+
+        window.addEventListener("scroll", reveal);
+        reveal();
     </script>
 </body>
 </html>
