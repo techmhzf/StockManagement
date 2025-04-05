@@ -4,92 +4,134 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Portfolio - InvestWise</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="../static/styles.css">
     <style>
         body {
-            font-family: 'Poppins', sans-serif;
-            background: #f4f6f9;
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f7f9;
             margin: 0;
             padding: 0;
         }
-
-        .container {
-            width: 80%;
-            margin: 50px auto;
-            background: #fff;
-            padding: 20px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            border-radius: 10px;
-        }
-
-        h2 {
+        .navbar {
+            background-color: #007bff;
+            padding: 15px;
             text-align: center;
-            color: #1976d2;
         }
-
-        table {
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            padding: 15px 20px;
+            font-size: 18px;
+        }
+        .navbar a:hover {
+            background-color: #0056b3;
+            border-radius: 5px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 20px;
+            background: white;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            text-align: center;
+        }
+        h1 {
+            color: #333;
+            font-size: 26px;
+        }
+        .stock-table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
         }
-
-        th, td {
-            padding: 12px;
-            text-align: left;
+        .stock-table th, .stock-table td {
+            padding: 15px;
+            text-align: center;
             border-bottom: 1px solid #ddd;
         }
-
-        th {
-            background: #1976d2;
-            color: #fff;
+        .stock-table th {
+            background-color: #007bff;
+            color: white;
         }
-
-        .profit {
+        .stock-table tr:hover {
+            background-color: #f1f1f1;
+        }
+        .positive {
             color: green;
             font-weight: bold;
         }
-
-        .loss {
+        .negative {
             color: red;
             font-weight: bold;
+        }
+        .card {
+            background-color: #ffffff;
+            padding: 20px;
+            margin: 10px auto;
+            border-radius: 10px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.15);
+        }
+        .btn {
+            display: inline-block;
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            margin-top: 10px;
+            transition: background 0.3s;
+        }
+        .btn:hover {
+            background-color: #0056b3;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h2>Your Investment Portfolio</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>Stock Name</th>
-                    <th>Quantity</th>
-                    <th>Purchase Price</th>
-                    <th>Current Price</th>
-                    <th>Profit/Loss</th>
-                    <th>Investment Date</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>Reliance Industries</td>
-                    <td>10</td>
-                    <td>₹2,500</td>
-                    <td>₹2,700</td>
-                    <td class="profit">+₹2,000</td>
-                    <td>01-Mar-2025</td>
-                </tr>
-                <tr>
-                    <td>TCS</td>
-                    <td>5</td>
-                    <td>₹3,200</td>
-                    <td>₹3,100</td>
-                    <td class="loss">-₹500</td>
-                    <td>10-Feb-2025</td>
-                </tr>
-                <!-- More stocks can be dynamically added here -->
-            </tbody>
-        </table>
+
+    <!-- Navigation Bar -->
+    <div class="navbar">
+        <a href="/dashboard">Dashboard</a>
+        <a href="/portfolio">Portfolio</a>
+        <a href="/profile">Profile</a>
+        <a href="/logout">Logout</a>
     </div>
+
+    <!-- Portfolio Container -->
+    <div class="container">
+        <h1>Your Portfolio</h1>
+        
+        <!-- Portfolio Summary -->
+        <div class="card">
+            <h2>Portfolio Value: <span style="color: #007bff;">${{ portfolio_value }}</span></h2>
+            <p>Stocks Owned: <strong>{{ total_stocks }}</strong></p>
+        </div>
+
+        <!-- Live Stock Market Table -->
+        <h2>Live Stock Market</h2>
+        <table class="stock-table">
+            <tr>
+                <th>Stock</th>
+                <th>Price</th>
+                <th>Change (%)</th>
+            </tr>
+            {% for stock in stocks %}
+            <tr>
+                <td>{{ stock.name }} ({{ stock.symbol }})</td>
+                <td>${{ stock.price }}</td>
+                <td class="{% if stock.change >= 0 %}positive{% else %}negative{% endif %}">{{ stock.change }}%</td>
+            </tr>
+            {% endfor %}
+        </table>
+
+        <!-- View More Button -->
+        <a href="/dashboard" class="btn">Back to Dashboard</a>
+    </div>
+
 </body>
 </html>

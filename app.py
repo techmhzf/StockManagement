@@ -1,35 +1,55 @@
-from flask import Flask, render_template, request, redirect, flash, jsonify, url_for
+from flask import Flask, render_template, request, redirect, flash, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
-from config import Config
-from database import db
-from database.models import User, Stock  
+import yfinance as yf
 
-# Initialize Flask App
+# Flask App Initialization
 app = Flask(__name__)
-app.config.from_object(Config)
+app.config['SECRET_KEY'] = 'your_secret_key'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-# Initialize Database
-db.init_app(app)
-
-# Initialize Extensions
+# Database & Encryption Setup
+db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
 login_manager = LoginManager(app)
 login_manager.login_view = "login"
 
-# User Loader
+# User Model
+class User(db.Model, UserMixin):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    email = db.Column(db.String(150), unique=True, nullable=False)
+    password = db.Column(db.String(255), nullable=False)
+
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-# Home Route (Redirects if logged in)
+# Fetch Live Stock Data
+def fetch_stock_data():
+    symbols = ['AAPL', 'GOOGL', 'TSLA', 'MSFT', 'AMZN']
+    stock_data = []
+
+    for symbol in symbols:
+        stock = yf.Ticker(symbol)
+        info = stock.info
+        stock_data.append({
+            'symbol': symbol,
+            'name': info.get('shortName', 'N/A'),
+            'price': round(info.get('regularMarketPrice', 0), 2),
+            'change': round(info.get('regularMarketChangePercent', 0), 2)
+        })
+
+    return stock_data
+
+# Home Page
 @app.route('/')
 def home():
-    if current_user.is_authenticated:
-        return redirect(url_for('dashboard'))  # ✅ Redirect to dashboard if logged in
-    return render_template('index.html')  # ✅ Show index.html for guests
+    return render_template('index.html')
 
+# Registration Route
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
@@ -39,54 +59,67 @@ def register():
 
         if User.query.filter_by(email=email).first():
             flash("Email already registered!", "danger")
-            return redirect(url_for('register'))
+            return redirect('/register')
 
         new_user = User(name=name, email=email, password=password)
         db.session.add(new_user)
         db.session.commit()
         flash("Registration successful! Please login.", "success")
-        return redirect(url_for('login'))
+        return redirect('/login')
 
     return render_template('register.html')
 
+# Login Route
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         email = request.form['email']
         password = request.form['password']
-
         user = User.query.filter_by(email=email).first()
+
         if user and bcrypt.check_password_hash(user.password, password):
             login_user(user)
-            flash("Login successful!", "success")
-            return redirect(url_for('dashboard'))
+            return redirect('/dashboard')
         else:
             flash("Invalid credentials!", "danger")
 
     return render_template('login.html')
 
+# Dashboard Route
 @app.route('/dashboard')
-@login_required  # ✅ Requires login
+@login_required
 def dashboard():
-    stocks = Stock.query.all()
-    return render_template('dashboard.html', name=current_user.name, stocks=stocks)
+    stock_data = fetch_stock_data()
+    return render_template('dashboard.html', name=current_user.name, stocks=stock_data)
 
+# Portfolio Route
+@app.route('/portfolio')
+@login_required
+def portfolio():
+    stock_data = fetch_stock_data()
+    return render_template('portfolio.html', name=current_user.name, stocks=stock_data)
+
+# Profile Route
+@app.route('/profile')
+@login_required
+def profile():
+    return render_template('profile.html', name=current_user.name, email=current_user.email)
+
+# API Route for Live Stock Data
+@app.route('/api/stocks', methods=['GET'])
+def get_stocks():
+    return jsonify(fetch_stock_data())
+
+# Logout Route
 @app.route('/logout')
 @login_required
 def logout():
     logout_user()
     flash("Logged out successfully!", "info")
-    return redirect(url_for('home'))  # ✅ Redirect to index.html after logout
+    return redirect('/')
 
-@app.route('/api/stocks')
-def stock_data():
-    stocks = Stock.query.all()
-    data = [{"symbol": stock.symbol, "company": stock.company, "price": stock.price, "change": stock.change} for stock in stocks]
-    return jsonify(data)
-
-# Create Database Tables
-with app.app_context():
-    db.create_all()
-
+# Run the Flask App
 if __name__ == '__main__':
+    with app.app_context():
+        db.create_all()
     app.run(debug=True)

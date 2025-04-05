@@ -3,139 +3,146 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>InvestWise - Dashboard</title>
+    <title>Dashboard - InvestWise</title>
     <link rel="stylesheet" href="../static/styles.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body {
-            font-family: 'Roboto', sans-serif;
-            background-color: #e3f2fd;
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f7f9;
             color: #333;
             margin: 0;
+            padding: 0;
         }
-        header {
-            background-color: #0288d1;
-            color: #fff;
-            padding: 20px;
+        .navbar {
+            background-color: #1976d2;
+            padding: 15px;
             text-align: center;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
+        }
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            padding: 15px 20px;
+            font-size: 18px;
+        }
+        .navbar a:hover {
+            background-color: #0056b3;
+            border-radius: 5px;
         }
         .container {
             width: 90%;
             margin: auto;
             margin-top: 20px;
         }
+        .dashboard-header {
+            background: white;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
         .grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 20px;
+            margin-top: 20px;
         }
         .card {
-            background-color: #fff;
-            border-radius: 12px;
-            padding: 30px;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            transition: 0.3s;
         }
         .card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+            transform: translateY(-5px);
         }
         table {
             width: 100%;
             border-collapse: collapse;
-            background-color: #fafafa;
-            border-radius: 8px;
+            margin-top: 10px;
         }
         th, td {
-            padding: 15px;
-            text-align: left;
+            padding: 12px;
             border-bottom: 1px solid #ddd;
+            text-align: left;
         }
         th {
-            background-color: #bbdefb;
-            color: #01579b;
+            background-color: #1976d2;
+            color: white;
         }
-        button {
-            background-color: #0277bd;
-            color: #fff;
-            padding: 12px 24px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.3s ease;
-        }
-        button:hover {
-            background-color: #01579b;
-            transform: scale(1.05);
+        .chart-container {
+            margin-top: 20px;
+            text-align: center;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>InvestWise Dashboard</h1>
-            <button onclick="logout()">Logout</button>
-        </header>
-        <div class="grid">
-            <section class="card user-info">
-                <h2>Welcome, {{ name }}</h2>
-                <p>Email: {{ current_user.email }}</p>
-                <p>Portfolio Value: ${{ portfolio_value }}</p>
-            </section>
-            <section class="card stock-summary">
-                <h2>Stock Holdings</h2>
-                <ul>
-                    {% for stock in stocks %}
-                    <li>{{ stock.company }} ({{ stock.symbol }}) - ${{ stock.price }} | Change: {{ stock.change }}%</li>
-                    {% endfor %}
-                </ul>
-            </section>
-        </div>
-        <section class="card chart-container">
-            <h2>Market Trends</h2>
-            <canvas id="stockChart"></canvas>
-        </section>
-        <section class="card transactions">
-            <h2>Recent Transactions</h2>
-            <table>
-                <tr>
-                    <th>Stock</th>
-                    <th>Action</th>
-                    <th>Price</th>
-                    <th>Date</th>
-                </tr>
-                {% for transaction in transactions %}
-                <tr>
-                    <td>{{ transaction.stock }}</td>
-                    <td>{{ transaction.action }}</td>
-                    <td>${{ transaction.price }}</td>
-                    <td>{{ transaction.date }}</td>
-                </tr>
-                {% endfor %}
-            </table>
-        </section>
+
+    <!-- Navigation Bar -->
+    <div class="navbar">
+        <a href="/dashboard">Dashboard</a>
+        <a href="/portfolio">Portfolio</a>
+        <a href="/profile">Profile</a>
+        <a href="/logout">Logout</a>
     </div>
+
+    <!-- Welcome Section -->
+    <div class="container">
+        <div class="dashboard-header">
+            <h1>Welcome, {{ name }}</h1>
+            <p>Your real-time stock insights are below.</p>
+        </div>
+
+        <!-- Stock Overview Section -->
+        <div class="grid">
+            <div class="card">
+                <h2>Live Stock Market</h2>
+                <table>
+                    <tr>
+                        <th>Stock</th>
+                        <th>Price ($)</th>
+                        <th>Change (%)</th>
+                    </tr>
+                    {% for stock in stocks %}
+                    <tr>
+                        <td>{{ stock.name }} ({{ stock.symbol }})</td>
+                        <td>${{ stock.price }}</td>
+                        <td style="color: {{ 'green' if stock.change > 0 else 'red' }};">
+                            {{ stock.change }}%
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+
+            <div class="card">
+                <h2>Market Trends</h2>
+                <canvas id="stockChart"></canvas>
+            </div>
+        </div>
+    </div>
+
     <script>
-        function logout() {
-            window.location.href = '/logout';
-        }
+        // Sample Data for Chart
         var ctx = document.getElementById('stockChart').getContext('2d');
         var stockChart = new Chart(ctx, {
             type: 'line',
             data: {
-                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May'],
+                labels: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
                 datasets: [{
-                    label: 'Stock Price Trend',
-                    data: [120, 130, 140, 125, 150],
-                    borderColor: '#0288d1',
-                    backgroundColor: 'rgba(2, 136, 209, 0.2)',
+                    label: 'Stock Price Movement',
+                    data: [120, 130, 140, 125, 150], // Sample data
+                    borderColor: '#007bff',
+                    backgroundColor: 'rgba(0, 123, 255, 0.2)',
                     fill: true
                 }]
+            },
+            options: {
+                responsive: true
             }
         });
     </script>
+
 </body>
 </html>
